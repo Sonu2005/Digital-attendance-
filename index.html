@@ -306,7 +306,7 @@
       <input type="date" id="attDate" min="2026-08-31" max="2026-09-30">
       <span class="weekpill" id="attWeekPill">—</span>
     </div>
-    <div class="note">Attendance you save here is stored in a shared class register, visible to anyone using this portal — don't include anything you wouldn't want classmates to see.</div>
+    <div class="note">Attendance you save here is stored only in this browser, on this device. It won't appear on a classmate's phone or a different computer — each device keeps its own copy.</div>
     <div class="att-list" id="attList"></div>
     <div class="savebar">
       <button class="btn-primary" id="saveAttBtn">Save attendance</button>
@@ -398,6 +398,33 @@ const WEEK_RANGES = [
   {start:"2026-09-28",end:"2026-09-30",type:"odd",label:"5th week — Odd"}
 ];
 
+/* ============ STORAGE (browser localStorage — works on GitHub Pages) ============ */
+/* Note: this stores data only in the current browser/device. It does NOT sync
+   between different students' phones/computers. See the note in the Attendance tab. */
+function lsGet(key){
+  try{
+    const v = localStorage.getItem(key);
+    if(v===null) return null;
+    return {key, value:v};
+  }catch(e){ return null; }
+}
+function lsSet(key, value){
+  try{
+    localStorage.setItem(key, value);
+    return {key, value};
+  }catch(e){ return null; }
+}
+function lsList(prefix){
+  try{
+    const keys = [];
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith(prefix)) keys.push(k);
+    }
+    return {keys};
+  }catch(e){ return {keys:[]}; }
+}
+
 /* ============ STATE ============ */
 let currentRoll = null;
 let currentSection = null;
@@ -439,7 +466,7 @@ rollInput.addEventListener('input', async ()=>{
   currentSection = sectionForRoll(roll);
   if(currentSection){
     sectionBadge.textContent = "Section "+currentSection+" — Roll "+roll;
-    try{ await window.storage.set('lastRoll', String(roll), false); }catch(e){}
+    lsSet('lastRoll', String(roll));
   } else {
     sectionBadge.textContent = "Enter roll to detect section";
   }
@@ -449,14 +476,12 @@ rollInput.addEventListener('input', async ()=>{
 });
 
 /* restore last roll */
-(async function initRoll(){
-  try{
-    const r = await window.storage.get('lastRoll', false);
-    if(r && r.value){
-      rollInput.value = r.value;
-      rollInput.dispatchEvent(new Event('input'));
-    }
-  }catch(e){}
+(function initRoll(){
+  const r = lsGet('lastRoll');
+  if(r && r.value){
+    rollInput.value = r.value;
+    rollInput.dispatchEvent(new Event('input'));
+  }
 })();
 
 /* ============ NAV ============ */
@@ -600,11 +625,11 @@ async function renderAttendanceList(){
 
   // load existing record
   let existing = null;
-  try{
-    const key = `attendance:${iso}:${currentSection}:${currentRoll}`;
-    const res = await window.storage.get(key, true);
-    if(res && res.value) existing = JSON.parse(res.value);
-  }catch(e){ /* no existing record */ }
+  const key = `attendance:${iso}:${currentSection}:${currentRoll}`;
+  const res = lsGet(key);
+  if(res && res.value){
+    try{ existing = JSON.parse(res.value); }catch(e){ existing = null; }
+  }
 
   if(existing && existing.periods){
     existing.periods.forEach(p=>{ attStatuses[p.idx] = p.status; });
@@ -657,17 +682,12 @@ document.getElementById('saveAttBtn').addEventListener('click', async ()=>{
     .map(p=>({idx:p.idx, subject:p.code, status:attStatuses[p.idx]||"unmarked"}));
 
   const record = {roll:currentRoll, section:currentSection, date:iso, periods, savedAt:new Date().toISOString()};
-  try{
-    const key = `attendance:${iso}:${currentSection}:${currentRoll}`;
-    const res = await window.storage.set(key, JSON.stringify(record), true);
-    if(res){
-      saveStatus.textContent = "Saved.";
-      saveStatus.classList.add('ok');
-    } else {
-      saveStatus.textContent = "Could not save — try again.";
-      saveStatus.classList.remove('ok');
-    }
-  }catch(e){
+  const key = `attendance:${iso}:${currentSection}:${currentRoll}`;
+  const res = lsSet(key, JSON.stringify(record));
+  if(res){
+    saveStatus.textContent = "Saved on this device.";
+    saveStatus.classList.add('ok');
+  } else {
     saveStatus.textContent = "Could not save — try again.";
     saveStatus.classList.remove('ok');
   }
@@ -687,26 +707,20 @@ async function loadRegister(){
   summary.innerHTML = "";
 
   const prefix = `attendance:${iso}:${sec}:`;
-  let keys = [];
-  try{
-    const res = await window.storage.list(prefix, true);
-    keys = (res && res.keys) ? res.keys : [];
-  }catch(e){
-    wrap.innerHTML = '<p class="regempty">Could not load the register — try again.</p>';
-    return;
-  }
+  const listRes = lsList(prefix);
+  const keys = listRes.keys || [];
 
   if(keys.length===0){
-    wrap.innerHTML = '<p class="regempty">No attendance has been saved yet for this date and section.</p>';
+    wrap.innerHTML = '<p class="regempty">No attendance has been saved yet for this date and section on this device.</p>';
     return;
   }
 
   const records = [];
   for(const k of keys){
-    try{
-      const r = await window.storage.get(k, true);
-      if(r && r.value) records.push(JSON.parse(r.value));
-    }catch(e){ /* skip unreadable key */ }
+    const r = lsGet(k);
+    if(r && r.value){
+      try{ records.push(JSON.parse(r.value)); }catch(e){ /* skip unreadable entry */ }
+    }
   }
   records.sort((a,b)=>a.roll-b.roll);
 
