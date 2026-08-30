@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CITME Bhubaneswar — MCA 1st Semester Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#152238;
+    --navy-2:#1E3358;
+    --paper:#F7F5EF;
+    --panel:#FFFFFF;
+    --ink:#1B1D22;
+    --slate:#5C6472;
+    --slate-light:#8A90A0;
+    --gold:#B4842A;
+    --line:#DCD7C9;
+    --line-soft:#EAE7DD;
+    --present:#2F7D5D;
+    --present-bg:#E6F1EB;
+    --absent:#B84C3E;
+    --absent-bg:#F6E7E4;
+    --break-bg:#F1E3BE;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Manrope', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+    padding-bottom:60px;
+  }
+  a{color:inherit;}
+
+  /* ---------- Banner ---------- */
+  .banner{
+    background:linear-gradient(155deg,var(--navy) 0%,var(--navy-2) 100%);
+    color:#F4F2EA;
+    padding:34px 24px 28px;
+  }
+  .banner-inner{max-width:920px;margin:0 auto;}
+  .banner h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(24px,4vw,34px);
+    margin:0 0 4px;
+    letter-spacing:0.2px;
+  }
+  .banner p{
+    margin:0;
+    color:#C7CCDA;
+    font-size:14.5px;
+    font-weight:500;
+  }
+  .banner .tag{
+    display:inline-block;
+    margin-top:14px;
+    font-size:12.5px;
+    color:#E7C77A;
+    border:1px solid rgba(231,199,122,0.4);
+    border-radius:20px;
+    padding:4px 12px;
+    font-weight:600;
+  }
+
+  /* ---------- Nav ---------- */
+  .navwrap{
+    position:sticky; top:0; z-index:20;
+    background:var(--panel);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    max-width:920px;margin:0 auto;
+    display:flex; align-items:center; gap:4px;
+    padding:0 20px;
+    overflow-x:auto;
+  }
+  .nav button{
+    appearance:none;border:none;background:none;
+    font-family:'Manrope';font-weight:700;font-size:14px;
+    color:var(--slate);
+    padding:16px 14px 13px;
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  .nav button.active{color:var(--navy);border-bottom-color:var(--gold);}
+  .nav button:hover{color:var(--navy);}
+
+  .container{max-width:920px;margin:0 auto;padding:28px 20px 0;}
+
+  /* ---------- Roll bar ---------- */
+  .rollbar{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px;
+    margin-bottom:26px;
+  }
+  .rollbar label{font-size:13px;font-weight:700;color:var(--slate);}
+  .rollbar input[type=number]{
+    width:90px; padding:8px 10px; font-size:15px;
+    border:1px solid var(--line); border-radius:4px;
+    font-family:'Manrope';font-weight:700;color:var(--ink);
+    background:var(--paper);
+  }
+  .rollbar input[type=number]:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .section-badge{
+    font-size:12.5px;font-weight:800;color:var(--navy);
+    background:var(--break-bg); border:1px solid var(--line);
+    padding:5px 11px;border-radius:20px;
+  }
+  .rollbar .hint{font-size:12.5px;color:var(--slate-light);}
+
+  h2.pagehead{
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:22px; margin:0 0 4px;color:var(--navy);
+  }
+  .subhead{color:var(--slate);font-size:14px;margin:0 0 20px;}
+
+  /* ---------- Today timeline (signature element) ---------- */
+  .datebar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:18px;flex-wrap:wrap;gap:10px;
+  }
+  .datebar .weekpill{
+    font-size:12.5px;font-weight:700;color:var(--navy);
+    background:#fff;border:1px solid var(--line);padding:5px 12px;border-radius:20px;
+  }
+  input[type=date]{
+    padding:7px 10px;border:1px solid var(--line);border-radius:4px;
+    font-family:'Manrope';font-weight:600;font-size:13.5px;background:#fff;color:var(--ink);
+  }
+
+  .timeline{border-left:2px solid var(--line);margin-left:8px;}
+  .tl-item{
+    position:relative;
+    padding:2px 0 22px 26px;
+  }
+  .tl-item::before{
+    content:'';position:absolute;left:-7px;top:4px;
+    width:12px;height:12px;border-radius:50%;
+    background:var(--panel);border:2px solid var(--navy-2);
+  }
+  .tl-item.is-break::before{border-color:var(--gold);background:var(--break-bg);}
+  .tl-item.is-off::before{border-color:var(--line);background:#fff;}
+  .tl-time{font-size:12px;font-weight:700;color:var(--slate);letter-spacing:0.2px;}
+  .tl-subject{font-size:17px;font-weight:700;color:var(--ink);margin-top:2px;}
+  .tl-full{font-size:13px;color:var(--slate);margin-top:1px;}
+  .tl-item.is-break .tl-subject{color:var(--gold);}
+  .tl-item.is-off .tl-subject{color:var(--slate-light);font-weight:600;}
+
+  /* ---------- Weekly table ---------- */
+  .weektabs{display:flex;gap:8px;margin-bottom:16px;}
+  .weektabs button{
+    font-family:'Manrope';font-weight:700;font-size:13px;
+    padding:8px 16px;border-radius:20px;border:1px solid var(--line);
+    background:#fff;color:var(--slate);cursor:pointer;
+  }
+  .weektabs button.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .range{font-size:12.5px;color:var(--slate-light);margin-bottom:16px;}
+
+  table.routine{
+    width:100%;border-collapse:collapse;background:#fff;
+    margin-bottom:30px;font-size:12.8px;
+  }
+  table.routine caption{
+    text-align:left;font-family:'Fraunces',serif;font-weight:600;
+    font-size:16px;color:var(--navy);padding:2px 0 10px;
+  }
+  table.routine th, table.routine td{
+    border:1px solid var(--line);padding:8px 6px;text-align:center;
+  }
+  table.routine thead th{
+    background:var(--navy);color:#F4F2EA;font-weight:700;font-size:11.5px;
+  }
+  table.routine tbody th{
+    background:var(--line-soft);font-weight:800;color:var(--navy);text-align:left;padding-left:10px;
+  }
+  table.routine td.break{background:var(--break-bg);font-weight:700;color:#8A6A1F;}
+  table.routine td.empty{color:var(--slate-light);}
+
+  .legend{
+    display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--slate);
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:30px;
+  }
+  .legend b{color:var(--ink);}
+
+  /* ---------- Attendance ---------- */
+  .att-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+  .att-row{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:13px 16px;
+  }
+  .att-row .who{display:flex;flex-direction:column;}
+  .att-row .time{font-size:11.5px;color:var(--slate);font-weight:700;}
+  .att-row .subj{font-size:15.5px;font-weight:700;}
+  .att-row .full{font-size:12.5px;color:var(--slate);}
+  .toggle{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;}
+  .toggle button{
+    border:none;background:#fff;padding:7px 14px;font-family:'Manrope';font-weight:700;
+    font-size:12.5px;cursor:pointer;color:var(--slate);
+  }
+  .toggle button.present.on{background:var(--present-bg);color:var(--present);}
+  .toggle button.absent.on{background:var(--absent-bg);color:var(--absent);}
+
+  .savebar{display:flex;align-items:center;gap:14px;margin-bottom:36px;}
+  .btn-primary{
+    background:var(--navy);color:#fff;border:none;border-radius:4px;
+    padding:11px 22px;font-family:'Manrope';font-weight:700;font-size:14px;cursor:pointer;
+  }
+  .btn-primary:hover{background:var(--navy-2);}
+  .savestatus{font-size:13px;color:var(--slate);}
+  .savestatus.ok{color:var(--present);font-weight:700;}
+
+  .note{
+    font-size:12.5px;color:var(--slate);background:#fff;border:1px solid var(--line);
+    border-left:3px solid var(--gold);border-radius:4px;padding:12px 14px;margin-bottom:24px;
+  }
+
+  /* ---------- Register ---------- */
+  .regbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px;}
+  select{
+    padding:8px 10px;border:1px solid var(--line);border-radius:4px;
+    font-family:'Manrope';font-weight:700;font-size:13.5px;background:#fff;color:var(--ink);
+  }
+  table.register{width:100%;border-collapse:collapse;background:#fff;font-size:12.5px;}
+  table.register th,table.register td{border:1px solid var(--line);padding:8px 6px;text-align:center;}
+  table.register thead th{background:var(--navy);color:#F4F2EA;font-size:11px;}
+  table.register td.status-P{color:var(--present);font-weight:800;}
+  table.register td.status-A{color:var(--absent);font-weight:800;}
+  table.register td.roll{font-weight:800;color:var(--navy);}
+  .regempty{font-size:13.5px;color:var(--slate-light);padding:30px 0;text-align:center;}
+  .summary{display:flex;gap:18px;margin-bottom:16px;flex-wrap:wrap;}
+  .summary .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px 18px;min-width:110px;}
+  .summary .card .n{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--navy);}
+  .summary .card .l{font-size:11.5px;color:var(--slate);font-weight:700;}
+
+  footer{max-width:920px;margin:20px auto 0;padding:0 20px;font-size:12px;color:var(--slate-light);}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="banner-inner">
+    <h1>College of IT and Management Education, Bhubaneswar</h1>
+    <p>MCA · 1st Semester · Sections A &amp; B</p>
+    <span class="tag">Digital routine &amp; attendance · 31 Aug – 30 Sep 2026</span>
+  </div>
+</div>
+
+<div class="navwrap">
+  <div class="nav">
+    <button data-tab="today" class="active">Today's Class</button>
+    <button data-tab="week">Weekly Routine</button>
+    <button data-tab="attendance">Mark Attendance</button>
+    <button data-tab="register">Class Register</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="rollbar">
+    <label for="rollInput">Roll No.</label>
+    <input type="number" id="rollInput" min="1" max="128" placeholder="1–128">
+    <span class="section-badge" id="sectionBadge">Enter roll to detect section</span>
+    <span class="hint">Roll 1–64 → Section A · Roll 65–128 → Section B</span>
+  </div>
+
+  <!-- TODAY -->
+  <section id="tab-today">
+    <h2 class="pagehead">Today's Class</h2>
+    <p class="subhead" id="todaySubhead">Pick a section to see the schedule.</p>
+    <div class="datebar">
+      <input type="date" id="todayDate" min="2026-08-31" max="2026-09-30">
+      <span class="weekpill" id="todayWeekPill">—</span>
+    </div>
+    <div class="timeline" id="todayTimeline"></div>
+  </section>
+
+  <!-- WEEK -->
+  <section id="tab-week" style="display:none;">
+    <h2 class="pagehead">Weekly Routine</h2>
+    <p class="subhead" id="weekSubhead">Enter a roll number above, or the routine below defaults to Section A.</p>
+    <div class="weektabs">
+      <button data-week="odd" class="active">Odd weeks — 1st, 3rd, 5th</button>
+      <button data-week="even">Even weeks — 2nd, 4th</button>
+    </div>
+    <div class="range" id="weekRange"></div>
+    <div id="weekTableWrap"></div>
+    <div class="legend" id="legendBox"></div>
+  </section>
+
+  <!-- ATTENDANCE -->
+  <section id="tab-attendance" style="display:none;">
+    <h2 class="pagehead">Mark Attendance</h2>
+    <p class="subhead">Attendance is logged per period, for the date selected below.</p>
+    <div class="datebar">
+      <input type="date" id="attDate" min="2026-08-31" max="2026-09-30">
+      <span class="weekpill" id="attWeekPill">—</span>
+    </div>
+    <div class="note">Attendance you save here is stored in a shared class register, visible to anyone using this portal — don't include anything you wouldn't want classmates to see.</div>
+    <div class="att-list" id="attList"></div>
+    <div class="savebar">
+      <button class="btn-primary" id="saveAttBtn">Save attendance</button>
+      <span class="savestatus" id="saveStatus"></span>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section id="tab-register" style="display:none;">
+    <h2 class="pagehead">Class Register</h2>
+    <p class="subhead">Look up who marked attendance for any date.</p>
+    <div class="regbar">
+      <input type="date" id="regDate" min="2026-08-31" max="2026-09-30">
+      <select id="regSection">
+        <option value="A">Section A (1–64)</option>
+        <option value="B">Section B (65–128)</option>
+      </select>
+      <button class="btn-primary" id="regLoadBtn">Load register</button>
+    </div>
+    <div class="summary" id="regSummary"></div>
+    <div id="regTableWrap"></div>
+  </section>
+
+</div>
+<footer>Routine source: official CITME Section A &amp; B MCA 1st semester timetables, 31 Aug – 30 Sep 2026.</footer>
+
+<script>
+/* ============ DATA ============ */
+const TIMES = [
+  "10:00 – 11:00 AM","11:00 AM – 12:00 NOON","12:00 NOON – 1:00 PM",
+  "1:00 – 2:00 PM","2:00 – 3:00 PM","3:00 – 4:00 PM","4:00 – 5:00 PM"
+];
+const BREAK_IDX = 3;
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+const FULL = {
+  "PPS":"Programming for Problem Solving","ENG":"Communicative English","DLD":"Digital Logic Design",
+  "CN":"Computer Networks","DMS":"Discrete Mathematics","DBMS":"Database Management Systems",
+  "C LAB":"C Programming Lab","DBMS LAB":"Database Management Systems Lab","CN LAB":"Computer Networks Lab",
+  "ENG LAB":"English / Language Lab","ENG LB":"English / Language Lab",
+  "C-LAB / DBMS LAB":"C Programming Lab / DBMS Lab (rotational)","Mentoring Activity":"Mentoring Activity",
+  "BREAK":"Break","-":"No class"
+};
+
+const SCHEDULE = {
+  A:{
+    odd:{
+      Monday:["PPS","ENG","DLD","BREAK","CN","DMS","-"],
+      Tuesday:["DMS","DBMS","ENG","BREAK","C LAB","-","-"],
+      Wednesday:["DLD","PPS","CN","BREAK","DBMS LAB","DBMS LAB","-"],
+      Thursday:["-","DLD","DBMS","BREAK","DMS","ENG LAB","-"],
+      Friday:["PPS","DLD","DBMS","BREAK","CN LAB","-","-"],
+      Saturday:["C-LAB / DBMS LAB","C-LAB / DBMS LAB","Mentoring Activity","-","-","-","-"]
+    },
+    even:{
+      Monday:["PPS","ENG","DLD","BREAK","CN","DMS","-"],
+      Tuesday:["DMS","DBMS","ENG","BREAK","C LAB","-","-"],
+      Wednesday:["DLD","PPS","CN","BREAK","DBMS LAB","DBMS LAB","-"],
+      Thursday:["-","CN","DBMS","BREAK","DMS","ENG LAB","-"],
+      Friday:["PPS","DLD","DBMS","BREAK","CN LAB","-","-"],
+      Saturday:["-","-","-","-","-","-","-"]
+    }
+  },
+  B:{
+    odd:{
+      Monday:["DLD","CN","ENG","BREAK","ENG LB","ENG LB","-"],
+      Tuesday:["PPS","ENG","DMS","BREAK","DBMS LAB","DBMS LAB","DBMS LAB"],
+      Wednesday:["CN","DBMS","DMS","BREAK","C LAB","C LAB","C LAB"],
+      Thursday:["DBMS","PPS","CN","BREAK","CN LAB","CN LAB","CN LAB"],
+      Friday:["DBMS","CN","PPS","BREAK","DMS","DLD","-"],
+      Saturday:["C-LAB / DBMS LAB","C-LAB / DBMS LAB","Mentoring Activity","BREAK","-","-","-"]
+    },
+    even:{
+      Monday:["DLD","CN","ENG","BREAK","ENG LB","ENG LB","-"],
+      Tuesday:["PPS","ENG","DMS","BREAK","DBMS LAB","DBMS LAB","DBMS LAB"],
+      Wednesday:["CN","DBMS","DMS","BREAK","C LAB","C LAB","C LAB"],
+      Thursday:["DBMS","PPS","DLD","BREAK","CN LAB","CN LAB","CN LAB"],
+      Friday:["DBMS","CN","PPS","BREAK","DMS","DLD","-"],
+      Saturday:["-","-","-","BREAK","-","-","-"]
+    }
+  }
+};
+
+const WEEK_RANGES = [
+  {start:"2026-08-31",end:"2026-09-06",type:"odd",label:"1st week — Odd"},
+  {start:"2026-09-07",end:"2026-09-13",type:"even",label:"2nd week — Even"},
+  {start:"2026-09-14",end:"2026-09-20",type:"odd",label:"3rd week — Odd"},
+  {start:"2026-09-21",end:"2026-09-27",type:"even",label:"4th week — Even"},
+  {start:"2026-09-28",end:"2026-09-30",type:"odd",label:"5th week — Odd"}
+];
+
+/* ============ STATE ============ */
+let currentRoll = null;
+let currentSection = null;
+
+/* ============ HELPERS ============ */
+function todayISO(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function clampToRange(iso){
+  if(iso < "2026-08-31") return "2026-08-31";
+  if(iso > "2026-09-30") return "2026-09-30";
+  return iso;
+}
+function weekInfoFor(iso){
+  return WEEK_RANGES.find(r => iso >= r.start && iso <= r.end) || null;
+}
+function dayNameFor(iso){
+  const d = new Date(iso+"T00:00:00");
+  const idx = d.getDay(); // 0 Sun .. 6 Sat
+  if(idx===0) return null;
+  return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][idx];
+}
+function sectionForRoll(roll){
+  if(!roll || roll<1 || roll>128) return null;
+  return roll<=64 ? "A":"B";
+}
+function fmtDate(iso){
+  const d = new Date(iso+"T00:00:00");
+  return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ============ ROLL BAR ============ */
+const rollInput = document.getElementById('rollInput');
+const sectionBadge = document.getElementById('sectionBadge');
+rollInput.addEventListener('input', async ()=>{
+  const roll = parseInt(rollInput.value,10);
+  currentRoll = roll;
+  currentSection = sectionForRoll(roll);
+  if(currentSection){
+    sectionBadge.textContent = "Section "+currentSection+" — Roll "+roll;
+    try{ await window.storage.set('lastRoll', String(roll), false); }catch(e){}
+  } else {
+    sectionBadge.textContent = "Enter roll to detect section";
+  }
+  renderToday();
+  renderWeek();
+  renderAttendanceList();
+});
+
+/* restore last roll */
+(async function initRoll(){
+  try{
+    const r = await window.storage.get('lastRoll', false);
+    if(r && r.value){
+      rollInput.value = r.value;
+      rollInput.dispatchEvent(new Event('input'));
+    }
+  }catch(e){}
+})();
+
+/* ============ NAV ============ */
+const navButtons = document.querySelectorAll('.nav button');
+const tabs = {
+  today: document.getElementById('tab-today'),
+  week: document.getElementById('tab-week'),
+  attendance: document.getElementById('tab-attendance'),
+  register: document.getElementById('tab-register')
+};
+navButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    navButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    Object.values(tabs).forEach(t=>t.style.display='none');
+    tabs[btn.dataset.tab].style.display='block';
+  });
+});
+
+/* ============ TODAY TAB ============ */
+const todayDateInput = document.getElementById('todayDate');
+todayDateInput.value = clampToRange(todayISO());
+todayDateInput.addEventListener('change', renderToday);
+
+function renderToday(){
+  const iso = todayDateInput.value || clampToRange(todayISO());
+  const sec = currentSection || "A";
+  const wi = weekInfoFor(iso);
+  const dn = dayNameFor(iso);
+  const pill = document.getElementById('todayWeekPill');
+  const timeline = document.getElementById('todayTimeline');
+  const subhead = document.getElementById('todaySubhead');
+
+  subhead.textContent = currentSection
+    ? "Section "+currentSection+" — "+fmtDate(iso)
+    : "Showing Section A by default — "+fmtDate(iso)+". Enter a roll number for your own section.";
+
+  if(!wi){
+    pill.textContent = "Outside published range";
+    timeline.innerHTML = '<p class="tl-full">No routine is published for this date. The current routine covers 31 Aug – 30 Sep 2026.</p>';
+    return;
+  }
+  pill.textContent = wi.label;
+
+  if(!dn || dn==="Sunday"){
+    timeline.innerHTML = '<div class="tl-item is-off"><div class="tl-time">All day</div><div class="tl-subject">No classes — Sunday</div></div>';
+    return;
+  }
+
+  const row = SCHEDULE[sec][wi.type][dn];
+  if(!row){
+    timeline.innerHTML = '<p class="tl-full">No schedule found.</p>';
+    return;
+  }
+  timeline.innerHTML = row.map((code,i)=>{
+    const isBreak = code==="BREAK";
+    const isOff = code==="-";
+    const cls = isBreak ? "is-break" : (isOff ? "is-off" : "");
+    return `<div class="tl-item ${cls}">
+      <div class="tl-time">${TIMES[i]}</div>
+      <div class="tl-subject">${isOff ? "Free period" : code}</div>
+      ${(!isOff && !isBreak) ? `<div class="tl-full">${FULL[code]||""}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+/* ============ WEEK TAB ============ */
+let weekTabState = "odd";
+document.querySelectorAll('.weektabs button').forEach(btn=>{
+  b
