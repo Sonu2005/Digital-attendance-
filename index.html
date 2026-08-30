@@ -348,44 +348,44 @@ const FULL = {
   "C LAB":"C Programming Lab","DBMS LAB":"Database Management Systems Lab","CN LAB":"Computer Networks Lab",
   "ENG LAB":"English / Language Lab","ENG LB":"English / Language Lab",
   "C-LAB / DBMS LAB":"C Programming Lab / DBMS Lab (rotational)","Mentoring Activity":"Mentoring Activity",
-  "LUNCH BREAK":"Break","-":"No class"
+  "BREAK":"Lunch Break","-":"No class"
 };
 
 const SCHEDULE = {
   A:{
     odd:{
-      Monday:["PPS","ENG","DLD","LUNCH BREAK","CN","DMS","-"],
-      Tuesday:["DMS","DBMS","ENG","LUNCH BREAK","C LAB","-","-"],
-      Wednesday:["DLD","PPS","CN","LUNCH BREAK","DBMS LAB","DBMS LAB","-"],
-      Thursday:["-","DLD","DBMS","LUNCH BREAK","DMS","ENG LAB","-"],
-      Friday:["PPS","DLD","DBMS","LUNCH BREAK","CN LAB","-","-"],
+      Monday:["PPS","ENG","DLD","BREAK","CN","DMS","-"],
+      Tuesday:["DMS","DBMS","ENG","BREAK","C LAB","-","-"],
+      Wednesday:["DLD","PPS","CN","BREAK","DBMS LAB","DBMS LAB","-"],
+      Thursday:["-","DLD","DBMS","BREAK","DMS","ENG LAB","-"],
+      Friday:["PPS","DLD","DBMS","BREAK","CN LAB","-","-"],
       Saturday:["C-LAB / DBMS LAB","C-LAB / DBMS LAB","Mentoring Activity","-","-","-","-"]
     },
     even:{
-      Monday:["PPS","ENG","DLD","LUNCH BREAK","CN","DMS","-"],
-      Tuesday:["DMS","DBMS","ENG","LUNCH BREAK","C LAB","-","-"],
-      Wednesday:["DLD","PPS","CN","LUNCH BREAK","DBMS LAB","DBMS LAB","-"],
-      Thursday:["-","CN","DBMS","LUNCH BREAK","DMS","ENG LAB","-"],
-      Friday:["PPS","DLD","DBMS","LUNCH BREAK","CN LAB","-","-"],
+      Monday:["PPS","ENG","DLD","BREAK","CN","DMS","-"],
+      Tuesday:["DMS","DBMS","ENG","BREAK","C LAB","-","-"],
+      Wednesday:["DLD","PPS","CN","BREAK","DBMS LAB","DBMS LAB","-"],
+      Thursday:["-","CN","DBMS","BREAK","DMS","ENG LAB","-"],
+      Friday:["PPS","DLD","DBMS","BREAK","CN LAB","-","-"],
       Saturday:["-","-","-","-","-","-","-"]
     }
   },
   B:{
     odd:{
-      Monday:["DLD","CN","ENG","LUNCH BREAK","ENG LB","ENG LB","-"],
-      Tuesday:["PPS","ENG","DMS","LUNCH BREAK","DBMS LAB","DBMS LAB","DBMS LAB"],
-      Wednesday:["CN","DBMS","DMS","LUNCH BREAK","C LAB","C LAB","C LAB"],
-      Thursday:["DBMS","PPS","CN","LUNCH BREAK","CN LAB","CN LAB","CN LAB"],
-      Friday:["DBMS","CN","PPS","LUNCH BREAK","DMS","DLD","-"],
-      Saturday:["C-LAB / DBMS LAB","C-LAB / DBMS LAB","Mentoring Activity","-","-","-","-"]
+      Monday:["DLD","CN","ENG","BREAK","ENG LB","ENG LB","-"],
+      Tuesday:["PPS","ENG","DMS","BREAK","DBMS LAB","DBMS LAB","DBMS LAB"],
+      Wednesday:["CN","DBMS","DMS","BREAK","C LAB","C LAB","C LAB"],
+      Thursday:["DBMS","PPS","CN","BREAK","CN LAB","CN LAB","CN LAB"],
+      Friday:["DBMS","CN","PPS","BREAK","DMS","DLD","-"],
+      Saturday:["C-LAB / DBMS LAB","C-LAB / DBMS LAB","Mentoring Activity","BREAK","-","-","-"]
     },
     even:{
-      Monday:["DLD","CN","ENG","LUNCH BREAK","ENG LB","ENG LB","-"],
-      Tuesday:["PPS","ENG","DMS","LUNCH BREAK","DBMS LAB","DBMS LAB","DBMS LAB"],
-      Wednesday:["CN","DBMS","DMS","LUNCH BREAK","C LAB","C LAB","C LAB"],
-      Thursday:["DBMS","PPS","DLD","LUNCH BREAK","CN LAB","CN LAB","CN LAB"],
-      Friday:["DBMS","CN","PPS","LUNCH BREAK","DMS","DLD","-"],
-      Saturday:["-","-","-","-","-","-","-"]
+      Monday:["DLD","CN","ENG","BREAK","ENG LB","ENG LB","-"],
+      Tuesday:["PPS","ENG","DMS","BREAK","DBMS LAB","DBMS LAB","DBMS LAB"],
+      Wednesday:["CN","DBMS","DMS","BREAK","C LAB","C LAB","C LAB"],
+      Thursday:["DBMS","PPS","DLD","BREAK","CN LAB","CN LAB","CN LAB"],
+      Friday:["DBMS","CN","PPS","BREAK","DMS","DLD","-"],
+      Saturday:["-","-","-","BREAK","-","-","-"]
     }
   }
 };
@@ -517,7 +517,7 @@ function renderToday(){
     const cls = isBreak ? "is-break" : (isOff ? "is-off" : "");
     return `<div class="tl-item ${cls}">
       <div class="tl-time">${TIMES[i]}</div>
-      <div class="tl-subject">${isOff ? "Free period" : code}</div>
+      <div class="tl-subject">${isOff ? "Free period" : (isBreak ? "Lunch Break" : code)}</div>
       ${(!isOff && !isBreak) ? `<div class="tl-full">${FULL[code]||""}</div>` : ""}
     </div>`;
   }).join("");
@@ -526,4 +526,227 @@ function renderToday(){
 /* ============ WEEK TAB ============ */
 let weekTabState = "odd";
 document.querySelectorAll('.weektabs button').forEach(btn=>{
-  b
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.weektabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    weekTabState = btn.dataset.week;
+    renderWeek();
+  });
+});
+
+function renderWeek(){
+  const sec = currentSection || "A";
+  document.getElementById('weekSubhead').textContent =
+    (currentSection ? "Section "+currentSection : "Section A (default — enter your roll above for your own section)");
+  document.getElementById('weekRange').textContent = weekTabState==="odd"
+    ? "Applicable dates: 31 Aug – 6 Sep · 14 – 20 Sep · 28 – 30 Sep"
+    : "Applicable dates: 7 – 13 Sep · 21 – 27 Sep";
+
+  const data = SCHEDULE[sec][weekTabState];
+  let html = `<table class="routine"><caption>Section ${sec} — ${weekTabState==="odd"?"Odd":"Even"} week routine</caption>
+    <thead><tr><th>Day</th>${TIMES.map(t=>`<th>${t}</th>`).join("")}</tr></thead><tbody>`;
+  DAYS.forEach(day=>{
+    const row = data[day];
+    html += `<tr><th>${day}</th>` + row.map(code=>{
+      if(code==="BREAK") return `<td class="break">Lunch Break</td>`;
+      if(code==="-") return `<td class="empty">—</td>`;
+      return `<td>${code}</td>`;
+    }).join("") + `</tr>`;
+  });
+  html += `</tbody></table>`;
+  document.getElementById('weekTableWrap').innerHTML = html;
+
+  document.getElementById('legendBox').innerHTML = Object.entries(FULL)
+    .filter(([k])=>!["BREAK","-"].includes(k))
+    .map(([k,v])=>`<span><b>${k}</b> — ${v}</span>`).join("");
+}
+
+/* ============ ATTENDANCE TAB ============ */
+const attDateInput = document.getElementById('attDate');
+attDateInput.value = clampToRange(todayISO());
+let attStatuses = {}; // periodIndex -> 'P' | 'A'
+
+attDateInput.addEventListener('change', renderAttendanceList);
+
+async function renderAttendanceList(){
+  const iso = attDateInput.value || clampToRange(todayISO());
+  const wi = weekInfoFor(iso);
+  document.getElementById('attWeekPill').textContent = wi ? wi.label : "Outside range";
+  const list = document.getElementById('attList');
+  const saveStatus = document.getElementById('saveStatus');
+  saveStatus.textContent = "";
+  attStatuses = {};
+
+  if(!currentSection){
+    list.innerHTML = '<p class="subhead">Enter your roll number above to mark attendance.</p>';
+    return;
+  }
+  if(!wi){
+    list.innerHTML = '<p class="subhead">No routine published for this date.</p>';
+    return;
+  }
+  const dn = dayNameFor(iso);
+  if(!dn || dn==="Sunday"){
+    list.innerHTML = '<p class="subhead">No classes on Sunday.</p>';
+    return;
+  }
+  const row = SCHEDULE[currentSection][wi.type][dn];
+  const periods = row.map((code,i)=>({idx:i,code})).filter(p=>p.code!=="BREAK" && p.code!=="-");
+
+  if(periods.length===0){
+    list.innerHTML = '<p class="subhead">No periods scheduled.</p>';
+    return;
+  }
+
+  // load existing record
+  let existing = null;
+  try{
+    const key = `attendance:${iso}:${currentSection}:${currentRoll}`;
+    const res = await window.storage.get(key, true);
+    if(res && res.value) existing = JSON.parse(res.value);
+  }catch(e){ /* no existing record */ }
+
+  if(existing && existing.periods){
+    existing.periods.forEach(p=>{ attStatuses[p.idx] = p.status; });
+  }
+
+  list.innerHTML = periods.map(p=>{
+    const status = attStatuses[p.idx];
+    return `<div class="att-row" data-idx="${p.idx}">
+      <div class="who">
+        <span class="time">${TIMES[p.idx]}</span>
+        <span class="subj">${p.code}</span>
+        <span class="full">${FULL[p.code]||""}</span>
+      </div>
+      <div class="toggle">
+        <button class="present ${status==='P'?'on':''}" data-status="P">Present</button>
+        <button class="absent ${status==='A'?'on':''}" data-status="A">Absent</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  document.querySelectorAll('.att-row .toggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const row = btn.closest('.att-row');
+      const idx = row.dataset.idx;
+      attStatuses[idx] = btn.dataset.status;
+      row.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+    });
+  });
+}
+
+document.getElementById('saveAttBtn').addEventListener('click', async ()=>{
+  const saveStatus = document.getElementById('saveStatus');
+  if(!currentSection){
+    saveStatus.textContent = "Enter your roll number first.";
+    saveStatus.classList.remove('ok');
+    return;
+  }
+  const iso = attDateInput.value || clampToRange(todayISO());
+  const wi = weekInfoFor(iso);
+  const dn = dayNameFor(iso);
+  if(!wi || !dn || dn==="Sunday"){
+    saveStatus.textContent = "Nothing to save for this date.";
+    saveStatus.classList.remove('ok');
+    return;
+  }
+  const row = SCHEDULE[currentSection][wi.type][dn];
+  const periods = row.map((code,i)=>({idx:i,code}))
+    .filter(p=>p.code!=="BREAK" && p.code!=="-")
+    .map(p=>({idx:p.idx, subject:p.code, status:attStatuses[p.idx]||"unmarked"}));
+
+  const record = {roll:currentRoll, section:currentSection, date:iso, periods, savedAt:new Date().toISOString()};
+  try{
+    const key = `attendance:${iso}:${currentSection}:${currentRoll}`;
+    const res = await window.storage.set(key, JSON.stringify(record), true);
+    if(res){
+      saveStatus.textContent = "Saved.";
+      saveStatus.classList.add('ok');
+    } else {
+      saveStatus.textContent = "Could not save — try again.";
+      saveStatus.classList.remove('ok');
+    }
+  }catch(e){
+    saveStatus.textContent = "Could not save — try again.";
+    saveStatus.classList.remove('ok');
+  }
+});
+
+/* ============ REGISTER TAB ============ */
+const regDateInput = document.getElementById('regDate');
+regDateInput.value = clampToRange(todayISO());
+document.getElementById('regLoadBtn').addEventListener('click', loadRegister);
+
+async function loadRegister(){
+  const iso = regDateInput.value || clampToRange(todayISO());
+  const sec = document.getElementById('regSection').value;
+  const wrap = document.getElementById('regTableWrap');
+  const summary = document.getElementById('regSummary');
+  wrap.innerHTML = '<p class="regempty">Loading…</p>';
+  summary.innerHTML = "";
+
+  const prefix = `attendance:${iso}:${sec}:`;
+  let keys = [];
+  try{
+    const res = await window.storage.list(prefix, true);
+    keys = (res && res.keys) ? res.keys : [];
+  }catch(e){
+    wrap.innerHTML = '<p class="regempty">Could not load the register — try again.</p>';
+    return;
+  }
+
+  if(keys.length===0){
+    wrap.innerHTML = '<p class="regempty">No attendance has been saved yet for this date and section.</p>';
+    return;
+  }
+
+  const records = [];
+  for(const k of keys){
+    try{
+      const r = await window.storage.get(k, true);
+      if(r && r.value) records.push(JSON.parse(r.value));
+    }catch(e){ /* skip unreadable key */ }
+  }
+  records.sort((a,b)=>a.roll-b.roll);
+
+  const wi = weekInfoFor(iso);
+  const dn = dayNameFor(iso);
+  const row = (wi && dn) ? SCHEDULE[sec][wi.type][dn] : null;
+  const periodIdxs = row ? row.map((c,i)=>({i,c})).filter(p=>p.c!=="BREAK"&&p.c!=="-").map(p=>p.i) : [];
+
+  let presentCount=0, absentCount=0, totalMarks=0;
+  records.forEach(rec=>{
+    (rec.periods||[]).forEach(p=>{
+      if(p.status==='P'){presentCount++;totalMarks++;}
+      else if(p.status==='A'){absentCount++;totalMarks++;}
+    });
+  });
+
+  summary.innerHTML = `
+    <div class="card"><div class="n">${records.length}</div><div class="l">STUDENTS LOGGED</div></div>
+    <div class="card"><div class="n">${presentCount}</div><div class="l">PRESENT MARKS</div></div>
+    <div class="card"><div class="n">${absentCount}</div><div class="l">ABSENT MARKS</div></div>
+  `;
+
+  let html = `<table class="register"><thead><tr><th>Roll</th>${periodIdxs.map(i=>`<th>${row[i]}<br>${TIMES[i]}</th>`).join("")}</tr></thead><tbody>`;
+  records.forEach(rec=>{
+    html += `<tr><td class="roll">${rec.roll}</td>`;
+    periodIdxs.forEach(i=>{
+      const p = (rec.periods||[]).find(pp=>pp.idx===i);
+      const st = p ? p.status : "unmarked";
+      const label = st==='P' ? 'P' : (st==='A' ? 'A' : '—');
+      html += `<td class="status-${st==='P'?'P':(st==='A'?'A':'')}">${label}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  wrap.innerHTML = html;
+}
+
+/* ============ INIT ============ */
+renderToday();
+renderWeek();
+</script>
+</body>
+</html>
